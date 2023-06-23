@@ -39,7 +39,7 @@ navbar:
 #        href: 70GOF.html
   right:
   - icon: fab fa-github
-    href: https://github.com/JochemTolsma
+    href: https://github.com/JochemTolsma/INSNA2023
 output:
   bookdown::html_document2:
     theme: flatly

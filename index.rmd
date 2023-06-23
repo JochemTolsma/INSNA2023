@@ -1,5 +1,5 @@
 ---
-title: "Sunbelt 2023 Workshops: from webscraping to SNA"
+title: "Sunbelt 2023 Workshop: from webscraping to SNA"
 author: 
   - '**AUTHORS:**'
   - 'Rob Franken'  
@@ -144,7 +144,7 @@ The program of this workshop will be as follows:
 
 -   **Bas**
     -   Webscraping - [Lecture](./presentations/insna_science_data.pdf)
-    -   Webscraping - [Tutorial]("10scholars.html")
+    -   Webscraping - [Tutorial](10scholars.html)
 
 `r colorize("BREAK", "red")`\
 *Time: 11:30am - 11:45am*
@@ -153,8 +153,8 @@ The program of this workshop will be as follows:
 *Time: 11:45am - 12:30pm*
 
 -   **Anne Maaike**
-    -   names curating - [tutorial]("20names.html")
-    -   names to gender - [tutorial]("30gender.html")
+    -   names curating - [tutorial](20names.html)
+    -   names to gender - [tutorial](30gender.html)
 
 `r colorize("BREAK", "red")`\
 *Time: 12:30pm - 1:45pm*
@@ -163,7 +163,7 @@ The program of this workshop will be as follows:
 *Time: 1:45pm - 2:00pm*
 
 -   **Jochem and Bas**
-    -   Scraping publications - [demonstration]("40publications.html")
+    -   Scraping publications - [demonstration](40publications.html)
 
 `r colorize("RSiena", "red")`\
 
@@ -171,8 +171,8 @@ The program of this workshop will be as follows:
 
 -   **Jochem and Rob**
     -   Logic of RSiena - [lecture](./presentations/insna_logic_rsiena.pdf)  
-    -   Rsiena data preparation - [tutorial]("50pubnets.html")  
-    -   RSiena analyses  - [tutorial]("60RSiena.html")  
+    -   Rsiena data preparation - [tutorial](50pubnets.html)  
+    -   RSiena analyses  - [tutorial](60RSiena.html)  
     
 
 `r colorize("The End", "red")`\
