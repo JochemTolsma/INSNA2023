@@ -26,10 +26,6 @@ klippy::klippy(position = c('top', 'right'))
 
 ----
 
-
-
-
-
 # getting started
 
 Start with clean workspace 
@@ -45,8 +41,7 @@ rm(list=ls())
 We have two goals:  
 
 1. How to make an RSiena object ready to analyze.  
-2. Analyze a (very very) simple network evoluation model  
-
+2. Analyze a (very very) simple network evolution model  
 
 
 # Custom functions
@@ -280,7 +275,7 @@ ans <- fload("./data/processed/20230623ans.rda")
 
 ## Step 6: GOF
 
-Here, script are shown that can be used to present violin plots representing how well the simulations of our SIENA models capture the distribution of features of the dependent variable(s) (i.e., networks and 'behavior') that were not directly modeled, but for which a good fit between model and data is desirable. 
+Here, scripts are shown that can be used to present violin plots representing how well the simulations of our SIENA models capture the distribution of features of the dependent variable(s) (i.e., networks and 'behavior') that were not directly modeled, but for which a good fit between model and data is desirable. 
 
 Background reading: Lospinoso & Snijders [(-@Lospinoso2019)].
 
@@ -396,7 +391,7 @@ plot(gof0.gd)
 ## Step 7 (optional): Relative Influence
 
 
-Here, script are shown that can be used to calculate the expected relative importance of our effects.
+Here, scripts are shown that can be used to calculate the expected relative importance of our effects.
 
 Background reading: Indlekofer & Brander [(-@indlekofer2013)].
 
@@ -466,9 +461,13 @@ knitr::include_graphics("./results/RIans.png")
 
 <br>
 
-The bar charts display the relative impacts of effects of our model on individual actor decisions for all observations. The last bar chart in each row, as well as the pie chart, display expected relative importances of included effects for the next step, averaged across actors. 
+The bar charts display the relative impacts of effects of our model on individual actor decisions for all observations. The last bar chart in each row, as well as the pie chart, display expected relative importance of included effects for the next step, averaged across actors. 
 
+# THE END  
 
+YES, you made it until the end!. 
+
+Congrats. Time for drinks. 
 
 ----
 

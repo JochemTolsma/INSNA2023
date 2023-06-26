@@ -31,6 +31,8 @@ navbar:
         href: 30genderizeR.html
   - text: "RSiena"
     menu: 
+      - text: "Logic of RSiena"
+        href: 45logicRSiena.html
       - text: "dataprep"
         href: 50pubnets.html
       - text: "analyses"

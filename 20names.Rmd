@@ -32,11 +32,13 @@ klippy::klippy(position = c('top', 'right'))
 This file is used to tidy up the dataframes of political scientists and sociologists, by combining the two into a single dataframe with unique IDs and neat first and last names. 
 
 
-
 # Custom functions
 
 - `fpackage.check`: Check if packages are installed (and install if not) in R ([source](https://vbaliga.github.io/verify-that-r-packages-are-installed-and-loaded/)).  
-- `fsave`: Save to processed data in repository
+- `fsave`: Save to processed data in repository  
+- `fload`: To load the files back after an `fsave`  
+- `fshowdf`: To print objects (tibbles / data.frame) nicely on screen in .rmd  
+
 
 ```{r customfunctions, results='hide'}
 
@@ -78,17 +80,13 @@ fshowdf <-  function(x, ...) {
 
 # Packages
 
-- `ids`: package used to randomly generate unique ids
-
+- `ids`: package used to randomly generate unique ids  
 - `stringr` & `stringi` : for string manipulations
 
 
 ```{r, results='hide'}
-
 packages = c("ids", "stringr", "stringi")
-
 fpackage.check(packages)
-
 ```
 
 
@@ -96,7 +94,7 @@ fpackage.check(packages)
 
 # Input
 
-We saved the data from our webscrape in two files. 
+We already saved the data from our webscrape in two files. 
 Please download these files:  
 
 `r xfun::embed_file("./data/names_soc.csv")`  
@@ -118,12 +116,12 @@ pol <- read.csv("./data/names_pol.csv", sep=";", encoding="UTF-8")
 # Initial cleaning of the dataframes
 
 
-We start by cleaning up the .CSV files a bit. Sometimes transforming .csv files to an R format creates some odd things. In this case, for example, the first column name appears to be off. 
-Furthermore, dealing with files like this requires a little bit of 'regular expression magic'. Regular expressions help you to transform text (string) data, by calling either to specific strings (e.g. the word "dog"), or for certain generalizable string patterns (e.g. a string consisting of exactly three lowercase letters). Everything I have learned about string manipulation basically stems from [this webpage](https://cran.r-project.org/web/packages/stringr/vignettes/regular-expressions.html). Especially when using web-scraped data, you will encounter raw text data pretty regularly, so knowing about regular expressions will probably come in handy. 
+We start by cleaning up the .csv files a bit. Sometimes transforming .csv files to an R format creates some odd things. In this case, for example, the first column name appears to be off. 
+Furthermore, dealing with files like this requires a little bit of 'regular expression magic'. Regular expressions help you to transform text (string) data, by calling either to specific strings (e.g. the word "dog"), or for certain generalizable string patterns (e.g. a string consisting of exactly three lowercase letters).  
+Everything I have learned about string manipulation basically stems from [this webpage](https://cran.r-project.org/web/packages/stringr/vignettes/regular-expressions.html). Especially when using web-scraped data, you will encounter raw text data pretty regularly, so knowing about regular expressions will probably come in handy. 
 
 
 ```{r}
-
 # removing the "specialisatie" column from the political science data frame because it is poorly filled and does not exist in sociology
 
 pol <- subset(pol, select=-Specialisatie)
@@ -190,14 +188,12 @@ fshowdf(df)
 The excel file does not contain unique identifiers. This is important when combining multiple data sources to help you keep track of individuals in your sample, and make sure that the right information is matched to the right person. 
 
 ```{r}
-
 set.seed(2806)
 
 df$id <- ids::random_id(n = nrow(df), bytes = 3, use_openssl = FALSE)
 
 head(df$id)
 # should be "f84cb8" "ad5eeb" "5a5e57" "7c3ed2" "944260" "6c23fc" for reproducibility
-
 ```
 
 # names 
@@ -210,16 +206,14 @@ Now, we get to the nitty-gritty: creating separate objects from first and last n
 
 
 ```{r}
-
 head(df$name)
-
 ```
 
 Well, in principle it isn't! The names are in a standard format, e.g. "Jane Doe", so we just extract the first word for the first name, and the last word for the last name.
 
 For most cases, that is completely true! So in a sense our lives are easy, BUT...
 
-There is also a handful of exceptions, which we need to deal with in some way. For the second and third names in the data ("Marcel van Assen", "Weverthon Barbosa Machado"), we see that the full name consists of more than 2 words. 
+There are also a handful of exceptions, which we need to deal with in some way. For the second and third names in the data ("Marcel van Assen", "Weverthon Barbosa Machado"), we see that the full name consists of more than 2 words. 
 
 In the case of the first name, I can tell you that the 2nd word of the name string is something called a nobiliary particle. These are prepositions that often come up in Dutch names ("Van", "De", "Ten", among others), but also in some Spanish names ("Da"), French names ("Du", "Le"), German names ("Von", "Zu") and those are just a few examples. 
 

@@ -27,7 +27,10 @@ klippy::klippy(position = c('top', 'right'))
 # Custom functions
 
 - `fpackage.check`: Check if packages are installed (and install if not) in R ([source](https://vbaliga.github.io/verify-that-r-packages-are-installed-and-loaded/)).  
-- `fsave`: Save to processed data in repository
+- `fsave`: Save to processed data in repository  
+- `fload`: To load the files back after an `fsave`  
+- `fshowdf`: To print objects (tibbles / data.frame) nicely on screen in .rmd  
+
 
 ```{r customfunctions, results='hide'}
 
@@ -68,7 +71,7 @@ fshowdf <-  function(x, ...) {
 
 # Hands-on webscraping
 
-It is time to do some webscraping ourselves. In what follows is a short tutorial on webscraping where we will be collecting data from webpages on the internet. We will use the specific use case of political science department staff at several universties. What do they publish? Where? And with whom do they collaborate? We assume you have at least some experience with coding in R. In the rest of this tutorial, we will switch between base R and Tidyverse (just a bit), whatever is most convenient. (Note that this will happen often if you become an applied computational sociologist.)  
+It is time to do some webscraping ourselves. In what follows is a short tutorial on webscraping where we will be collecting data from webpages on the internet. We will use the specific use case of political science department staff at several universities. What do they publish? Where? And with whom do they collaborate? We assume you have at least some experience with coding in R. In the rest of this tutorial, we will switch between base R and Tidyverse (just a bit), whatever is most convenient. (Note that this will happen often if you become an applied computational sociologist.)  
 
 For even more info see our [SNASS book - Chapter 11](https://snass.netlify.app/webintro.html)
 
@@ -114,7 +117,11 @@ require(scholar)
 
 # Leiden University: Political Science
 
-What do we mean by anchor data? Our goal is to get to know (i) who the Political Science staff is at several universities, (ii) what they publish with respect to scientific work, and (iii) who they collaborate with. So that means at least three data sources we need to collect from somewhere. What would be a nice starting (read: anchor) point be? First, we have to know who is on the sociology staff. Let's check out [the Leiden political science staff website](https://www.universiteitleiden.nl/en/social-behavioural-sciences/political-science/staff#tab-1). Here we see a nice list on who is on the staff in several pages. How do we get that data? It is actually quite simple, the package `xml2` has a very nice function `html_read()` which simply derives the source html of a webpage:
+What do we mean by anchor data? Our goal is to get to know:  
+(i) who the Political Science staff is at several universities,  
+(ii) what they publish with respect to scientific work, and  
+(iii) who they collaborate with.  
+So that means at least three data sources we need to collect from somewhere. What would be a nice starting (read: anchor) point be? First, we have to know who is on the sociology staff. Let's check out [the Leiden political science staff website](https://www.universiteitleiden.nl/en/social-behavioural-sciences/political-science/staff#tab-1). Here we see a nice list on who is on the staff in several pages. How do we get that data? It is actually quite simple, the package `xml2` has a very nice function `html_read()` which simply derives the source html of a webpage:
 
 ```{r}
 # Let's first simply get the staff pages
@@ -131,9 +138,9 @@ That looks kinda weird. What type of object did we store it by putting the html 
 class(lpol_staff)
 ```
 
-So it is is stored in something that's called an xml object. Not important for now what that is. But it is important to extract the relevant table that we saw on the staff website. How do we do that? Go to one of the links above in a browser and then press "Inspect" on the webpage (usually: right click--\>Inspect). In the html code we extracted, we need to go to one of the nodes first. If you move your cursor over "div" in the html code on the screen, the entire "body" of the page should become some shade of blue. This means that the elements encapsulated in the "body" node captures everything that turned blue.
+So it is is stored in something that's called an xml object. Not important for now what that is. But it is important to extract the relevant table that we saw on the staff website. How do we do that? Go to one of the links above in a browser and then press "Inspect" on the webpage (usually: right click--\>Inspect). In the html code we extracted, we need to go to one of the nodes first. If you move your cursor over **"div"** in the html code on the screen, the entire **"body"** of the page should become some shade of blue. This means that the elements encapsulated in the **"body"** node captures everything that turned blue.
 
-Next, we need to look at the specific elements on the page that we need to extract. Somewhat by informed trial and error, looking for the correct code, we can select the elements we want. In the screenshot below, you see that the "td" elements actually are the ones we need. So we need code that looks for the node "main" and the "td" elements in the xml object and then extract those elements in it. Note that you can click on the arrows once you are in the "Inspect" mode in the web browser to trial-and-error to get at the correct elements.
+Next, we need to look at the specific elements on the page that we need to extract. Somewhat by informed trial and error, looking for the correct code, we can select the elements we want. In the screenshot below, you see that the **"td"** elements actually are the ones we need. So we need code that looks for the node **"main"** and the **"td"** elements in the xml object and then extract those elements in it. Note that you can click on the arrows once you are in the "Inspect" mode in the web browser to trial-and-error to get at the correct elements.
 
 ```{r}
 # so we need to find WHERE the table is located in the html
@@ -155,14 +162,7 @@ lpol_staff <-lpol_staff[-c(1:39)]
 lpol_staff<- lpol_staff[-c(133:length(lpol_staff))]
 head(lpol_staff)
 
-#options(knitr.kable.NA='')
-#length(unique(df$ego))
-
-
-  
-
-
-fshowdf(lpol_staff, caption="lpol_staff")
+fshowdf(lpol_staff)
 ```
 
 Still looks a bit messy. Can we get it into a dataframe and split the column into useful columns?
@@ -186,7 +186,7 @@ lpol_staff$func <- trimws(lpol_staff$func, which = c("both"), whitespace = "[ \t
 fshowdf(lpol_staff, caption="lpol_staff")
 ```
 
- Not bad, I think! Let's add an affiliation to these folks. And try to split first and last names. Note that I simply get the first "word" as the first name and the rest as the last name: for most cases this works, but definitely not for all.
+Not bad, I think! Let's add an affiliation to these folks. And try to split first and last names. Note that I simply get the first "word" as the first name and the rest as the last name: for most cases this works, but definitely not for all.
  
 ```{r}
 lpol_staff$affiliation <- "leiden university"
@@ -240,7 +240,7 @@ for (i in 1:4) {
 
 ```
 
-Now I want to get the relevant information out. We already know it is stored in some class that is not particularly useful to us. We want similar data compared to Leiden University: so we need function and name. In the code below we try to look for a css path in the html code called `.meta-data__item--field-employee-positions` to get relevant information on function. We then apply a number of regular expressions to clean that particular string element.
+Now I want to get the relevant information out. We already know it is stored in some class that is not particularly useful to us. We want similar data compared to Leiden University: so we need function and name. In the code below we try to look for a css path in the html code called **".meta-data__item--field-employee-positions"** to get relevant information on function. We then apply a number of regular expressions to clean that particular string element.
 
 ```{r}
 func <- list()
@@ -252,7 +252,7 @@ for (i in 1:4) {
 }
 ```
 
-So now we have function, we need to get names. This is more or less the same operation as before for Leiden University political science. But not how each university stores names differently. We again use a for loop where for each list element we extract the `h2` element from the `body` of the html. We then select the relevant data (I already peaked in the data, and it is in those indexes).
+So now we have function, we need to get names. This is more or less the same operation as before for Leiden University political science. But not how each university stores names differently. We again use a for loop where for each list element we extract the **"h2"** element from the **"body"** of the html. We then select the relevant data (I already peaked in the data, and it is in those indexes).
 
 ```{r}
 for (i in 1:4) {
@@ -287,16 +287,16 @@ rpol_staff$name <- gsub("prof. ", "", rpol_staff$name)
 rpol_staff$name <- trimws(rpol_staff$name, which = c("both"), whitespace = "[ \t\r\n]")
 ```
 
-Now it is time to perform some regular expressions. The names of Radboud university are stored quite differently: first names between brackets, last names before the comma. We also need to get the nobiliary particles ("van", "van de", etc.). For this we use regular expressions (a whole field on itself!). We f
+Now it is time to perform some regular expressions. The names of Radboud university are stored quite differently: first names between brackets, last names before the comma. We also need to get the nobiliary particles ("van", "van de", etc.). For this we use regular expressions (a whole field on itself!). 
 
 ```{r}
-# we first extract first name from in ebtween the brackets.
+# we first extract first name from in between the brackets.
 rpol_staff$first_name <- str_extract_all(rpol_staff$name, "(?<=\\().+?(?=\\))") 
 
 # we then look for last names before the the comma
 rpol_staff$last_name <- sub(",.*", "", rpol_staff$name) 
 
-# we then extract from the name string everything in between "." and "(", to find out whether there are any nobiliary partciles
+# we then extract from the name string everything in between "." and "(", to find out whether there are any nobiliary particles
 ln <- str_match(rpol_staff$name, "\\.\\s*(.*?)\\s*\\(")[,2]
 ln <- sub(".*\\.", "", ln) 
 
@@ -309,7 +309,7 @@ fshowdf(rpol_staff, caption="rpol_staff")
 ```
 
 ```{r}
-# usure wheter this happened, but I need to unlist first name!
+# unsure whether this happened, but I need to unlist first name!
 rpol_staff$first_name <- unlist(rpol_staff$first_name)
 class(rpol_staff$first_name) #seems to work
 ```
@@ -326,7 +326,7 @@ The third department we're checking is the VU university department of political
 vpol_staff <- read_html("https://vu.nl/en/about-vu/faculties/faculty-of-social-sciences/teams/staff-political-science-and-public-administration")
 ```
 
-We then inspect the page again, and find that we need the `p` elements in the html. Yet it is not stored very nicely, and so we need to extract odd and even elements to get functions and names. Can you follow what happens below?
+We then inspect the page again, and find that we need the **"p"** elements in the html. Yet it is not stored very nicely, and so we need to extract odd and even elements to get functions and names. Can you follow what happens below?
 
 ```{r}
 vpol_staff <- vpol_staff %>% 
@@ -370,14 +370,14 @@ vpol_staff$name <- trimws(vpol_staff$name, which = c("both"), whitespace = "[ \t
 vpol_staff$func <- trimws(vpol_staff$func, which = c("both"), whitespace = "[ \t\r\n]")
 
 # add affiliation and first and last name
-vpol_staff$affiliation <- "vu university amsterdam" # that's how scholar
+vpol_staff$affiliation <- "vu university amsterdam" 
 vpol_staff$first_name <- word(vpol_staff$name, 1)  # neat stringr package function
 vpol_staff$last_name <- sub(".*? ", "", vpol_staff$name)
 ```
 
 # Combining the three university together!
 
-Now we want to row bind all these data together such that we can continue finding Google Scholar profiles!
+Now we want to row bind all these data together such that we can continue with further cleaning of the names and finding Google Scholar profiles!
 
 ```{r}
 staff <- rbind(lpol_staff, rpol_staff, vpol_staff)

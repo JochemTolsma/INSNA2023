@@ -53,7 +53,10 @@ What we are not going to deal with here is how to tackle rate limits, alternatin
 # Custom functions
 
 - `fpackage.check`: Check if packages are installed (and install if not) in R ([source](https://vbaliga.github.io/verify-that-r-packages-are-installed-and-loaded/)).  
-- `fsave`: Save to processed data in repository
+- `fsave`: Save to processed data in repository  
+- `fload`: To load the files back after an `fsave`  
+- `fshowdf`: To print objects (tibbles / data.frame) nicely on screen in .rmd  
+
 
 ```{r customfunctions, results='hide'}
 fpackage.check <- function(packages) {
@@ -124,7 +127,7 @@ load("./data/processed/20230620df_gender_jt.rda") #load dataset (adapt name if n
 df <- x #give a short name
 rm(x)  #remove the original object
 #PLEASE NOTE THAT OBJECTS SAVED VIA FSAVE ARE NAMED X WHEN LOADED BACK INTO YOUR GLOBAL ENVIRONMENT
-
+#UPDATE: that is why we also made the fload function. 
 ```
 
 # Google: scholar id
@@ -188,9 +191,9 @@ get_scholar_id_fix <- function (last_name = "", first_name = "", affiliation = N
 
 ## one profile
 
-What we now have is a data frame of staff members from several universities. So we succesfully gathered the anchor data set we can move on with. Next, we need to find out whether these staff have a Google Scholar profile. I imagine you have accessed [Google Scholar](www.scholar.google.com) many times during your studies for finding scientists or publications. The nice thing about Google Scholar is that it lists collaborators, publications, and citations on profiles. So what we first need to do is look for Google Scholar profiles among staff. Luckily, we cleaned first and last names and have their affiliation.
+What we now have is a data frame of staff members from several universities. So we successfully gathered the anchor data set we can move on with. Next, we need to find out whether these staff have a Google Scholar profile. I imagine you have accessed [Google Scholar](www.scholar.google.com) many times during your studies for finding scientists or publications. The nice thing about Google Scholar is that it lists collaborators, publications, and citations on profiles. So what we first need to do is look for Google Scholar profiles among staff. Luckily, we cleaned first and last names and have their affiliation.
 
-So let's move on with attempting to find Google Scholar profiles. The package `scholar` has a very nice function `get_scholar_id`. It needs a last name, first name, and affiliation. Luckily, we already found those university websites! So we can fill in those. Let's try it for Jochem first. Note that we need function fix before we can start (you needeed to declare that in the first codechunk).
+So let's move on with attempting to find Google Scholar profiles. The package `scholar` has a very nice function `get_scholar_id`. It needs a last name, first name, and affiliation. Luckily, we already found those university websites! So we can fill in those. Let's try it for Jochem first. Note that we need function `get_scholar_id_fix` before we can start (see code chunk above).
 
 ```{r}
 get_scholar_id_fix(last_name="tolsma", first_name="jochem", affiliation="radboud university")
@@ -206,7 +209,6 @@ So let's gather these data, but now for *all* staff simultaneously! For this, we
 ## a simple loop
 
 ```{r, eval=FALSE}
-
 df$gs_id <- "" #let us create an empty variable
 
 for (i in 1:nrow(df)) {
@@ -237,10 +239,6 @@ for (i in 1:nrow(df)) {
     }, error=function(e){cat("ERROR :", conditionMessage(e), "\n")}) # continue on error, but print the error
   }
 }
-
-
-
-
 ```
 
 If everything worked out correctly, you could save the new dataset. 
@@ -278,13 +276,11 @@ fsave(df_gsid_jt)
 ```
 
 
-
 Please use this one:  
 
 `r xfun::embed_file("./data/processed/20230621df_gsid_jt.rda")`. 
 
 Save file in correct directory: './data/processed'. 
-
 
 
 
@@ -372,11 +368,9 @@ save(names_list_profiles, file= "./data/names_list_profiles_v20221006.RData")
 <!--this is STOP of my scrape for real--->
 
 
+Please note, that quite some Google profiles are missing. A quick look shows me this is mostly among the *position* category 'Phds' and 'other'. Thus probably because these scholars do not have any publications yet. This is however not always the case. Even some full profs do not have a Google scholar profile. The idea would be that even if they themselves do not have a profile, we can still find their publications with department (or discipline) members because we will find the same publications via different authors.  
 
-
-Please note, that quite some google profiles are missings. A quick look shows me this is mostly among the *position* category 'Phds' and 'other'. Thus probably because these scholars do not have any publications yet. This is however not always the case. Even some full profs do not have a google scholar profile. The idea would be that even if they themselves do not have a profile, we can still find their publications with department (or discipline) members because we will find the same publications via different authors.  
-
-Later, we need to decide wheter or not we set the number of publications for some scholars to `0`  or to `NA`. 
+Later, we need to decide whether or not we set the number of publications for some scholars to `0` or to `NA`. 
 
 ## objects to save scrap
 
@@ -483,10 +477,9 @@ rmNullObs <- function(x) {
    x <- Filter(Negate(is.NullOb), x)
    lapply(x, function(x) if (is.list(x)) rmNullObs(x) else x)
 }
-
 profiles <- rmNullObs(profiles)
 
-#yes, I know that apply, map etc can/may be faster. but loops are easy to understand. And easy to parallize if need be. 
+#yes, I know that apply, map etc can/may be faster. but loops are easy to understand. And easy to parallelize if need be. 
 
 for (i in 1:length(profiles)) {
  names(profiles)[[i]] <- profiles[[i]]$id$gs_id
@@ -496,7 +489,6 @@ for (i in 1:length(profiles)) {
 df$gs_name <- df$gs_affiliation <- df$gs_total_cites <- df$gs_h_index <- df$gs_i10_index <- df$gs_field <- df$gs_homepage <- NA
 
 for (i in 1:nrow(df)) {
-  
     who_id <- which(names(profiles)==df$gs_id[i])
     if (length(who_id)>0) tryCatch({{
       df$gs_name[i] <- profiles[[who_id]]$name

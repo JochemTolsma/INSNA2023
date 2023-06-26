@@ -43,7 +43,10 @@ Our goal is to make a network based on the publications we scraped for our schol
 # Custom functions
 
 - `fpackage.check`: Check if packages are installed (and install if not) in R ([source](https://vbaliga.github.io/verify-that-r-packages-are-installed-and-loaded/)).  
-- `fsave`: Save to processed data in repository
+- `fsave`: Save to processed data in repository  
+- `fload`: To load the files back after an `fsave`  
+- `fshowdf`: To print objects (tibbles / data.frame) nicely on screen in .rmd  
+
 
 ```{r customfunctions, results='hide'}
 fpackage.check <- function(packages) {
