@@ -11,3 +11,11 @@ stringr
 forcats
 ids
 stringi
+httr
+xml2
+rvest
+RSelenium
+reshape2
+usethis
+devtools
+scholar

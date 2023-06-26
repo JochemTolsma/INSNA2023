@@ -23,19 +23,19 @@ navbar:
         href: 10scholars.html
       - text: "Publications"
         href: 40publications.html
-  - text: "genderize"
+  - text: "Genderize"
     menu:
-      - text: "names"
+      - text: "Names"
         href: 20names.html
-      - text: "genderize"
+      - text: "Genderize"
         href: 30genderizeR.html
   - text: "RSiena"
     menu: 
-      - text: "Logic of RSiena"
+      - text: "Logic"
         href: 45logicRSiena.html
-      - text: "dataprep"
+      - text: "Dataprep"
         href: 50pubnets.html
-      - text: "analyses"
+      - text: "Analyses"
         href: 60RSiena.html  
  #     - text: "GOF"
 #        href: 70GOF.html

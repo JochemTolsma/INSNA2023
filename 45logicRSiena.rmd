@@ -171,6 +171,11 @@ Let us first start with a network. We will use the build in network of `RsienaTw
 
 Adjacency matrix
 
+```{r, echo=FALSE, eval=TRUE}
+net1 <- net1
+```
+
+
 ```{r }
 net1
 ```
@@ -181,7 +186,9 @@ net1
 net1g <- graph_from_adjacency_matrix(net1, mode="directed")
 coords <- layout_(net1g, nicely()) #let us keep the layout
 par(mar=c(.1, .1, .1, .1))
-plot.igraph(net1g, layout=coords)
+{plot.igraph(net1g, layout=coords)
+graphics::box()
+}
 ```
 
 
@@ -212,8 +219,17 @@ options
 plots <- lapply(options, graph_from_adjacency_matrix, mode="directed")
 par(mar=c(0,0,0,0)+.1)
 par(mfrow=c(2,2))
-lapply(plots, plot.igraph, layout=coords, margin=0) #can i put this in a grid quickly??
+
+fplot <- function(x) {
+  plot.igraph(x, layout=coords, margin=0)
+  graphics::box()
+}
+
+lapply(plots, fplot) 
 ```
+
+
+
 ### Network statistics 
 
 Which option will ego choose? Naturally this will depend on which network characteristics (or statistics) ego finds relevant. Let us suppose that ego bases its decision solely on the number of ties it sends to others and the number of reciprocated ties it has with others. 

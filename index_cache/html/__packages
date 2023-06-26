@@ -17,3 +17,13 @@ RSiena
 statnet.common
 network
 sna
+usethis
+devtools
+igraph
+foreach
+RsienaTwoStep
+httr
+xml2
+rvest
+RSelenium
+reshape2

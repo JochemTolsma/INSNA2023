@@ -12,3 +12,10 @@ scholar
 ids
 stringi
 genderizeR
+httr
+xml2
+rvest
+RSelenium
+reshape2
+usethis
+devtools
